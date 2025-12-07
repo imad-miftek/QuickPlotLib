@@ -1,0 +1,14 @@
+numpy==2.3.5
+PySide6==6.10.1
+PySide6_Addons==6.10.1
+PySide6_Essentials==6.10.1
+pytest==9.0.1
+pytest-cov==7.0.0
+ruff==0.14.5
+scikit_build_core==0.11.6
+setuptools==80.9.0
+setuptools-scm==9.2.2
+shiboken6==6.10.1
+shiboken6_generator==6.10.1
+mypy==1.18.2
+
