@@ -9,8 +9,8 @@ import QtQuick.Layouts
     \inqmlmodule QuickPlotLib
     \inherits Item
     \brief A complete graph with 4 axes in a 3x3 grid layout.
-    
-    Layout structure:
+
+    3x3 Grid Layout Structure:
     [Empty]      [TopAxis]     [Empty]
     [LeftAxis]   [GraphArea]   [RightAxis]
     [Empty]      [BottomAxis]  [Empty]
@@ -18,66 +18,6 @@ import QtQuick.Layouts
 
 Item {
     id: root
-
-    /*!
-        The background rectangle.
-    */
-    property alias background: background
-
-    /*!
-        The central graph area.
-    */
-    property alias graphArea: graphArea
-
-    /*!
-        Default property - children will be added to graph area.
-    */
-    default property alias graphChildren: graphArea.data
-
-    /*!
-        The view rectangle for data coordinates.
-    */
-    property alias viewRect: graphArea.viewRect
-
-    /*!
-        The left axis.
-    */
-    property alias leftAxis: leftAxis
-
-    /*!
-        The right axis.
-    */
-    property alias rightAxis: rightAxis
-
-    /*!
-        The top axis.
-    */
-    property alias topAxis: topAxis
-
-    /*!
-        The bottom axis.
-    */
-    property alias bottomAxis: bottomAxis
-
-    /*!
-        Label for left axis.
-    */
-    property alias leftLabel: leftAxis.label
-
-    /*!
-        Label for right axis.
-    */
-    property alias rightLabel: rightAxis.label
-
-    /*!
-        Label for top axis.
-    */
-    property alias topLabel: topAxis.label
-
-    /*!
-        Label for bottom axis.
-    */
-    property alias bottomLabel: bottomAxis.label
 
     /*!
         Graph title.
@@ -97,16 +37,8 @@ Item {
     property bool showTopAxis: false
     property bool showBottomAxis: true
 
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        color: "#F5F5F5"
-        border.width: 0
-    }
-
     GridLayout {
         id: mainLayout
-
         anchors.fill: parent
         anchors.margins: root.padding
         rows: 4  // Title + 3 layout rows
@@ -127,72 +59,71 @@ Item {
             visible: root.title !== ""
         }
 
-        // Row 0: Empty - TopAxis - Empty
-        Item {
+        // Row 0: Top-Left (Empty) - TopAxis - Top-Right (Empty)
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showTopAxis ? 50 : 0
+            color: "#CCCCCC"
             visible: root.showTopAxis
         }
 
-        Axis {
-            id: topAxis
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showTopAxis ? 50 : 0
-            direction: Axis.Direction.Top
+            color: "#3498DB"
             visible: root.showTopAxis
         }
 
-        Item {
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showTopAxis ? 50 : 0
+            color: "#CCCCCC"
             visible: root.showTopAxis
         }
 
         // Row 1: LeftAxis - GraphArea - RightAxis
-        Axis {
-            id: leftAxis
+        Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: root.showLeftAxis ? 60 : 0
-            direction: Axis.Direction.Left
+            color: "#E74C3C"
             visible: root.showLeftAxis
         }
 
-        GraphArea {
-            id: graphArea
+        Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 200
             Layout.minimumHeight: 200
+            color: "#2ECC71"
         }
 
-        Axis {
-            id: rightAxis
+        Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: root.showRightAxis ? 60 : 0
-            direction: Axis.Direction.Right
+            color: "#9B59B6"
             visible: root.showRightAxis
         }
 
-        // Row 2: Empty - BottomAxis - Empty
-        Item {
+        // Row 2: Bottom-Left (Empty) - BottomAxis - Bottom-Right (Empty)
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showBottomAxis ? 50 : 0
+            color: "#CCCCCC"
             visible: root.showBottomAxis
         }
 
-        Axis {
-            id: bottomAxis
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showBottomAxis ? 50 : 0
-            direction: Axis.Direction.Bottom
+            color: "#F39C12"
             visible: root.showBottomAxis
         }
 
-        Item {
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: root.showBottomAxis ? 50 : 0
+            color: "#CCCCCC"
             visible: root.showBottomAxis
         }
     }
 }
-
