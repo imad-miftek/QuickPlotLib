@@ -17,3 +17,7 @@ htmlcov
 Thumbs.db
 *.swp
 *.swo
+*.dll
+*.qmltypes
+qmldir
+
