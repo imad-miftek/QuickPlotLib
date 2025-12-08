@@ -59,6 +59,16 @@ Item {
     */
     property color color: "#333333"
 
+    /*!
+        Axis background color.
+    */
+    property color backgroundColor: "transparent"
+
+    /*!
+        Whether to show the spine.
+    */
+    property bool showSpine: true
+
     readonly property bool isVertical: direction === Axis.Direction.Left || direction === Axis.Direction.Right
     readonly property bool isHorizontal: !isVertical
 
@@ -67,6 +77,7 @@ Item {
 
     // Axis line
     Shape {
+        visible: root.showSpine
         anchors.fill: parent
 
         ShapePath {
@@ -75,31 +86,43 @@ Item {
             fillColor: "transparent"
 
             startX: {
-                if (root.direction === Axis.Direction.Right) return 0
-                if (root.direction === Axis.Direction.Left) return root.width
-                return 0
+                if (root.direction === Axis.Direction.Right)
+                    return 0;
+                if (root.direction === Axis.Direction.Left)
+                    return root.width;
+                return 0;
             }
             startY: {
-                if (root.direction === Axis.Direction.Bottom) return 0
-                if (root.direction === Axis.Direction.Top) return root.height
-                return 0
+                if (root.direction === Axis.Direction.Bottom)
+                    return 0;
+                if (root.direction === Axis.Direction.Top)
+                    return root.height;
+                return 0;
             }
 
             PathLine {
                 x: {
-                    if (root.direction === Axis.Direction.Right) return 0
-                    if (root.direction === Axis.Direction.Left) return root.width
-                    return root.width
+                    if (root.direction === Axis.Direction.Right)
+                        return 0;
+                    if (root.direction === Axis.Direction.Left)
+                        return root.width;
+                    return root.width;
                 }
                 y: {
-                    if (root.direction === Axis.Direction.Bottom) return 0
-                    if (root.direction === Axis.Direction.Top) return root.height
-                    return root.height
+                    if (root.direction === Axis.Direction.Bottom)
+                        return 0;
+                    if (root.direction === Axis.Direction.Top)
+                        return root.height;
+                    return root.height;
                 }
             }
         }
+    }
 
-        // Tick marks
+    // Tick marks
+    Shape {
+        anchors.fill: parent
+
         ShapePath {
             strokeColor: root.color
             strokeWidth: 1
@@ -107,95 +130,27 @@ Item {
 
             PathMultiline {
                 paths: {
-                    var lines = []
-                    var numTicks = root.ticks.length
-                    
+                    var lines = [];
+                    var numTicks = root.ticks.length;
+
                     for (var i = 0; i < numTicks; i++) {
-                        var pos = i / (numTicks - 1)
-                        
+                        var pos = (numTicks === 1) ? 0 : (i / (numTicks - 1));
+
                         if (root.isHorizontal) {
-                            var x = pos * root.width
-                            var y1 = root.direction === Axis.Direction.Bottom ? 0 : root.height
-                            var y2 = root.direction === Axis.Direction.Bottom ? root.tickLength : root.height - root.tickLength
-                            lines.push([Qt.point(x, y1), Qt.point(x, y2)])
+                            var x = Math.round(pos * (root.width - 1)) + 0.5;
+                            var y1 = root.direction === Axis.Direction.Bottom ? 0 : root.height;
+                            var y2 = root.direction === Axis.Direction.Bottom ? root.tickLength : root.height - root.tickLength;
+                            lines.push([Qt.point(x, y1), Qt.point(x, y2)]);
                         } else {
-                            var y = pos * root.height
-                            var x1 = root.direction === Axis.Direction.Right ? 0 : root.width
-                            var x2 = root.direction === Axis.Direction.Right ? root.tickLength : root.width - root.tickLength
-                            lines.push([Qt.point(x1, y), Qt.point(x2, y)])
+                            var y = Math.round((1 - pos) * (root.height - 1)) + 0.5;
+                            var x1 = root.direction === Axis.Direction.Right ? 0 : root.width;
+                            var x2 = root.direction === Axis.Direction.Right ? root.tickLength : root.width - root.tickLength;
+                            lines.push([Qt.point(x1, y), Qt.point(x2, y)]);
                         }
                     }
-                    return lines
+                    return lines;
                 }
             }
         }
-    }
-
-    // Tick labels
-    Repeater {
-        model: root.ticks
-        delegate: Text {
-            required property var modelData
-            required property int index
-
-            text: modelData.toFixed(1)
-            font.pixelSize: root.fontSize
-            color: root.color
-
-            x: {
-                if (root.isHorizontal) {
-                    var pos = index / (root.ticks.length - 1)
-                    return pos * root.width - width / 2
-                } else if (root.direction === Axis.Direction.Left) {
-                    return root.width - root.tickLength - width - 5
-                } else {
-                    return root.tickLength + 5
-                }
-            }
-
-            y: {
-                if (root.isVertical) {
-                    var pos = index / (root.ticks.length - 1)
-                    return pos * root.height - height / 2
-                } else if (root.direction === Axis.Direction.Bottom) {
-                    return root.tickLength + 5
-                } else {
-                    return root.height - root.tickLength - height - 5
-                }
-            }
-        }
-    }
-
-    // Axis label
-    Text {
-        text: root.label
-        font.pixelSize: root.fontSize + 2
-        font.bold: true
-        color: root.color
-        visible: root.label !== ""
-
-        x: {
-            if (root.isHorizontal) {
-                return (root.width - width) / 2
-            } else if (root.direction === Axis.Direction.Left) {
-                return 5
-            } else {
-                return root.width - width - 5
-            }
-        }
-
-        y: {
-            if (root.isVertical) {
-                return (root.height - height) / 2
-            } else if (root.direction === Axis.Direction.Bottom) {
-                return root.height - height - 5
-            } else {
-                return 5
-            }
-        }
-
-        rotation: root.isVertical && root.direction === Axis.Direction.Left ? -90 : 0
-        transformOrigin: Item.Center
     }
 }
-

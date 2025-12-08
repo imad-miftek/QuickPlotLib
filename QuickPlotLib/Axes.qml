@@ -52,10 +52,11 @@ Item {
     // ---- Public API -------------------------------------------------------
 
     /*! Left axis component. Default placeholder is provided. */
-    property Component leftAxis: Component {
-        Rectangle {
-            color: "#E74C3C"
-        }
+    property Component leftAxis: Axis {
+        direction: Axis.Direction.Left
+        ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        backgroundColor: '#E74C3C'
+        showSpine: false
     }
 
     /*! Right axis component. Default is null (off). */
@@ -66,8 +67,11 @@ Item {
 
     /*! Bottom axis component. Default placeholder is provided. */
     property Component bottomAxis: Component {
-        Rectangle {
-            color: "#F39C12"
+        Axis {
+            direction: Axis.Direction.Bottom
+            ticks: [0]
+            backgroundColor: '#F39C12'
+            showSpine: false
         }
     }
 
@@ -76,6 +80,9 @@ Item {
     property int rightAxisSize: 60
     property int topAxisSize: 60
     property int bottomAxisSize: 60
+
+    /*! Color for the corner "nothing" cells. */
+    property color cornerColor: '#b8b8f7'
 
     /*! The central graph area. */
     property alias graphArea: graphArea
@@ -173,5 +180,47 @@ Item {
         y: topMargin
         width: Math.max(0, root.width - leftMargin - rightMargin)
         height: Math.max(0, root.height - topMargin - bottomMargin)
+    }
+
+    // ---- Corner "nothing" cells -------------------------------------------
+
+    // Top-left corner
+    Rectangle {
+        x: 0
+        y: 0
+        width: leftMargin
+        height: topMargin
+        color: root.cornerColor
+        visible: width > 0 && height > 0
+    }
+
+    // Top-right corner
+    Rectangle {
+        x: root.width - rightMargin
+        y: 0
+        width: rightMargin
+        height: topMargin
+        color: root.cornerColor
+        visible: width > 0 && height > 0
+    }
+
+    // Bottom-left corner
+    Rectangle {
+        x: 0
+        y: root.height - bottomMargin
+        width: leftMargin
+        height: bottomMargin
+        color: root.cornerColor
+        visible: width > 0 && height > 0
+    }
+
+    // Bottom-right corner
+    Rectangle {
+        x: root.width - rightMargin
+        y: root.height - bottomMargin
+        width: rightMargin
+        height: bottomMargin
+        color: root.cornerColor
+        visible: width > 0 && height > 0
     }
 }
