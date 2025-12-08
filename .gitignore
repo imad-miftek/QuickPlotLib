@@ -17,3 +17,9 @@ htmlcov
 Thumbs.db
 *.swp
 *.swo
+
+# Build artifacts copied to source directory
+*.dll
+*.qmltypes
+QuickPlotLib/qmldir
+

@@ -211,3 +211,4 @@ Make sure Qt 6.10.0+ is installed and either:
 ## License
 
 MIT License - See [LICENCE](LICENCE) file for details.
+

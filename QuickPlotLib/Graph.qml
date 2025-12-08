@@ -4,46 +4,16 @@
 import QtQuick
 
 /*!
-\qmltype Axes
+\qmltype Graph
 \inqmlmodule QuickPlotLib
 \inherits Item
-\brief Core axis layout system for a single GraphArea.
+\brief Core axis layout system for a single GraphArea with integrated axes.
 
 Conceptual 3x3 grid (corners are "nothing" cells):
 
 [ NC | TopAxis | NC ]
 [ LeftAxis| GraphArea | RightAxis ]
 [ NC | BottomAxis | NC ]
-
-Active structures:
-
-- Default (left + bottom):
-2x2 layout derived from middle + bottom rows, left + center cols:
-
-[ LeftAxis | GraphArea ]
-[ Nothing | BottomAxis ]
-
-- Left + Bottom + Right:
-2x3 layout (middle + bottom rows, all three cols):
-
-[ LeftAxis | GraphArea | RightAxis ]
-[ Nothing | BottomAxis | Nothing ]
-
-- Top + Left + Bottom:
-3x2 layout (all three rows, left + center cols):
-
-[ Nothing | TopAxis ]
-[ LeftAxis | GraphArea ]
-[ Nothing | BottomAxis ]
-
-- Top + Left + Bottom + Right:
-Full 3x3 layout:
-
-[ Nothing | TopAxis | Nothing ]
-[ LeftAxis | GraphArea | RightAxis ]
-[ Nothing | BottomAxis | Nothing ]
-
-Corners (NC) are simply empty areas of the root item.
 */
 
 Item {
@@ -51,10 +21,16 @@ Item {
 
     // ---- Public API -------------------------------------------------------
 
-    /*! Left axis component. Default placeholder is provided. */
+    /*! Left axis component. */
     property Component leftAxis: Component {
-        Rectangle {
-            color: "#E74C3C"
+        Axis {
+            direction: Axis.Direction.Left
+            dataTransform: graphArea.dataTransform
+            viewRect: graphArea.viewRect
+            strokeColor: "#333333"
+            strokeWidth: 1
+            labelColor: "#333333"
+            tickLabelColor: "#333333"
         }
     }
 
@@ -64,10 +40,16 @@ Item {
     /*! Top axis component. Default is null (off). */
     property Component topAxis: null
 
-    /*! Bottom axis component. Default placeholder is provided. */
+    /*! Bottom axis component. */
     property Component bottomAxis: Component {
-        Rectangle {
-            color: "#F39C12"
+        Axis {
+            direction: Axis.Direction.Bottom
+            dataTransform: graphArea.dataTransform
+            viewRect: graphArea.viewRect
+            strokeColor: "#333333"
+            strokeWidth: 1
+            labelColor: "#333333"
+            tickLabelColor: "#333333"
         }
     }
 
@@ -86,6 +68,15 @@ Item {
     /*! View rectangle for data coordinates, delegated to GraphArea. */
     property alias viewRect: graphArea.viewRect
 
+    /*! Background rectangle */
+    property alias background: background
+
+    /*! Grid properties */
+    property alias gridColor: graphArea.gridColor
+    property alias gridLinesX: graphArea.gridLinesX
+    property alias gridLinesY: graphArea.gridLinesY
+    property alias showGrid: graphArea.showGrid
+
     // ---- Derived layout margins (3x3 conceptual grid) ---------------------
 
     readonly property bool hasLeftAxis: leftAxis !== null
@@ -97,6 +88,14 @@ Item {
     readonly property int rightMargin: hasRightAxis ? rightAxisSize : 0
     readonly property int topMargin: hasTopAxis ? topAxisSize : 0
     readonly property int bottomMargin: hasBottomAxis ? bottomAxisSize : 0
+
+    // Background
+    Rectangle {
+        id: background
+        anchors.fill: parent
+        color: "#FFFFFF"
+        border.width: 0
+    }
 
     // ---- Axis bands -------------------------------------------------------
 

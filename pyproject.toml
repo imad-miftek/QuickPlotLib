@@ -56,3 +56,4 @@ write_to = "QuickPlotLib/_version.py"
 [tool.ruff.lint.isort]
 combine-as-imports = true
 case-sensitive = false
+
