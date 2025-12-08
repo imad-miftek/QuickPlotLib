@@ -82,7 +82,7 @@ Item {
     property int bottomAxisSize: 60
 
     /*! Color for the corner "nothing" cells. */
-    property color cornerColor: '#b8b8f7'
+    property color cornerColor: 'transparent'
 
     /*! The central graph area. */
     property alias graphArea: graphArea

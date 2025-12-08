@@ -69,8 +69,63 @@ Item {
     */
     property bool showSpine: true
 
+    /*!
+        Whether to show tick labels.
+    */
+    property bool showTickLabels: true
+
+    /*!
+        Number of decimal points for tick labels.
+    */
+    property int decimalPoints: 2
+
+    /*!
+        Gap in pixels between tick marks and labels.
+        This gap is consistent across all axis orientations.
+    */
+    property int labelGap: 4
+
+    /*!
+        Color of the tick labels.
+    */
+    property color labelColor: color
+
     readonly property bool isVertical: direction === Axis.Direction.Left || direction === Axis.Direction.Right
     readonly property bool isHorizontal: !isVertical
+
+    /*!
+        Computed tick positions with spine and end points for each tick.
+        Used internally for rendering tick marks and labels.
+    */
+    readonly property var tickPositions: {
+        var positions = [];
+        var numTicks = ticks.length;
+
+        for (var i = 0; i < numTicks; i++) {
+            var pos = (numTicks === 1) ? 0.5 : (i / (numTicks - 1));
+
+            if (isHorizontal) {
+                var x = Math.round(pos * (width - 1)) + 0.5;
+                var spineY = direction === Axis.Direction.Bottom ? 0.5 : height - 0.5;
+                var endY = direction === Axis.Direction.Bottom ? tickLength - 0.5 : height - tickLength + 0.5;
+                positions.push({
+                    spinePoint: Qt.point(x, spineY),
+                    endPoint: Qt.point(x, endY),
+                    value: ticks[i]
+                });
+            } else {
+                var y = Math.round((1 - pos) * (height - 1)) + 0.5;
+                var spineX = direction === Axis.Direction.Right ? 0.5 : width - 0.5;
+                var endX = direction === Axis.Direction.Right ? tickLength - 0.5 : width - tickLength + 0.5;
+                positions.push({
+                    spinePoint: Qt.point(spineX, y),
+                    endPoint: Qt.point(endX, y),
+                    value: ticks[i]
+                });
+            }
+        }
+        return positions;
+    }
 
     implicitWidth: isVertical ? 60 : 200
     implicitHeight: isHorizontal ? 50 : 200
@@ -131,26 +186,30 @@ Item {
             PathMultiline {
                 paths: {
                     var lines = [];
-                    var numTicks = root.ticks.length;
-
-                    for (var i = 0; i < numTicks; i++) {
-                        var pos = (numTicks === 1) ? 0 : (i / (numTicks - 1));
-
-                        if (root.isHorizontal) {
-                            var x = Math.round(pos * (root.width - 1)) + 0.5;
-                            var y1 = root.direction === Axis.Direction.Bottom ? 0.5 : root.height - 0.5;
-                            var y2 = root.direction === Axis.Direction.Bottom ? root.tickLength - 0.5 : root.height - root.tickLength + 0.5;
-                            lines.push([Qt.point(x, y1), Qt.point(x, y2)]);
-                        } else {
-                            var y = Math.round((1 - pos) * (root.height - 1)) + 0.5;
-                            var x1 = root.direction === Axis.Direction.Right ? 0.5 : root.width - 0.5;
-                            var x2 = root.direction === Axis.Direction.Right ? root.tickLength - 0.5 : root.width - root.tickLength + 0.5;
-                            lines.push([Qt.point(x1, y), Qt.point(x2, y)]);
-                        }
+                    for (var i = 0; i < root.tickPositions.length; i++) {
+                        var tick = root.tickPositions[i];
+                        lines.push([tick.spinePoint, tick.endPoint]);
                     }
                     return lines;
                 }
             }
+        }
+    }
+
+    // Tick labels
+    Repeater {
+        model: root.showTickLabels ? root.tickPositions.length : 0
+
+        TickLabel {
+            required property int index
+
+            direction: root.direction
+            tickEnd: root.tickPositions[index].endPoint
+            value: root.tickPositions[index].value
+            decimalPoints: root.decimalPoints
+            gap: root.labelGap
+            textColor: root.labelColor
+            font.pixelSize: root.fontSize
         }
     }
 }

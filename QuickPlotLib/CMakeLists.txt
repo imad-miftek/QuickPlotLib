@@ -5,6 +5,7 @@ set(QPL_QML_FILES
     GraphArea.qml
     Axis.qml
     Axes.qml
+    TickLabel.qml
 )
 
 add_library(QuickPlotLibPlugin SHARED Plugin.cpp)
