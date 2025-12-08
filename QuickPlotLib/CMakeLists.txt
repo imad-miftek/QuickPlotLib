@@ -8,6 +8,11 @@ set(QPL_QML_FILES
     TickLabel.qml
 )
 
+set(QPL_CPP_SOURCES
+    TightText.cpp
+    TightText.hpp
+)
+
 add_library(QuickPlotLibPlugin SHARED Plugin.cpp)
 target_link_libraries(QuickPlotLibPlugin PRIVATE Qt6::Gui)
 
@@ -16,6 +21,7 @@ qt_add_qml_module(QuickPlotLib
     SHARED
     VERSION 1.0
     QML_FILES ${QPL_QML_FILES}
+    SOURCES ${QPL_CPP_SOURCES}
     PLUGIN_TARGET QuickPlotLibPlugin
     NO_GENERATE_PLUGIN_SOURCE
     NO_PLUGIN_OPTIONAL

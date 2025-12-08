@@ -209,7 +209,7 @@ Item {
             decimalPoints: root.decimalPoints
             gap: root.labelGap
             textColor: root.labelColor
-            font.pixelSize: root.fontSize
+            fontSize: root.fontSize
         }
     }
 }
