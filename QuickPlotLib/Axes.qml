@@ -84,6 +84,7 @@ Item {
         // Row 1: LeftAxis - GraphArea - RightAxis
         Rectangle {
             Layout.fillHeight: true
+            Layout.fillWidth: true
             Layout.preferredWidth: root.showLeftAxis ? 60 : 0
             color: "#E74C3C"
             visible: root.showLeftAxis
@@ -99,6 +100,7 @@ Item {
 
         Rectangle {
             Layout.fillHeight: true
+            Layout.fillWidth: true
             Layout.preferredWidth: root.showRightAxis ? 60 : 0
             color: "#9B59B6"
             visible: root.showRightAxis
