@@ -9,7 +9,7 @@ import QtQuick
     \inherits Item
     \brief A tick label with pixel-perfect glyph-tight positioning.
 
-    This component uses TightText for GPU-accelerated text rendering with
+    This component uses Glyph for GPU-accelerated text rendering with
     exact glyph bounds. The bounding box matches the rendered glyphs precisely,
     enabling pixel-perfect alignment of tick labels to tick marks.
 
@@ -19,7 +19,7 @@ import QtQuick
     - Left axis: RIGHT edge of text is 'gap' pixels left of tick
     - Right axis: LEFT edge of text is 'gap' pixels right of tick
 
-    \sa Axis, TightText
+    \sa Axis, Glyph
 */
 
 Item {
@@ -68,7 +68,7 @@ Item {
     */
     property int fontSize: 12
 
-    // Size matches the TightText exactly (pixel-perfect glyph bounds)
+    // Size matches the Glyph exactly (pixel-perfect glyph bounds)
     width: labelText.width
     height: labelText.height
 
@@ -107,8 +107,8 @@ Item {
         }
     }
 
-    // TightText provides GPU-accelerated rendering with exact glyph bounds
-    TightText {
+    // Glyph provides GPU-accelerated rendering with exact glyph bounds
+    Glyph {
         id: labelText
         text: Number(root.value).toFixed(root.decimalPoints)
         color: root.textColor

@@ -4,7 +4,7 @@
 import QtQuick
 
 /*!
-\qmltype Axes
+\qmltype Graph
 \inqmlmodule QuickPlotLib
 \inherits Item
 \brief Core axis layout system for a single GraphArea.

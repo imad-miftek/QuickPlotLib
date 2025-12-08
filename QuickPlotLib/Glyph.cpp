@@ -1,23 +1,23 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 QuickPlotLib contributors
 // SPDX-License-Identifier: MIT
 
-#include "TightText.hpp"
+#include "Glyph.hpp"
 
 #include <QPainter>
 #include <QFontMetricsF>
 #include <QSGSimpleTextureNode>
 #include <QQuickWindow>
 
-TightText::TightText(QQuickItem *parent)
+Glyph::Glyph(QQuickItem *parent)
     : QQuickItem(parent)
 {
     setFlag(ItemHasContents, true);
     updateMetrics();
 }
 
-TightText::~TightText() = default;
+Glyph::~Glyph() = default;
 
-void TightText::setText(const QString &text)
+void Glyph::setText(const QString &text)
 {
     if (m_text == text) {
         return;
@@ -30,7 +30,7 @@ void TightText::setText(const QString &text)
     update();
 }
 
-void TightText::setColor(const QColor &color)
+void Glyph::setColor(const QColor &color)
 {
     if (m_color == color) {
         return;
@@ -42,7 +42,7 @@ void TightText::setColor(const QColor &color)
     update();
 }
 
-void TightText::setFontFamily(const QString &family)
+void Glyph::setFontFamily(const QString &family)
 {
     if (m_fontFamily == family) {
         return;
@@ -55,7 +55,7 @@ void TightText::setFontFamily(const QString &family)
     update();
 }
 
-void TightText::setPixelSize(int size)
+void Glyph::setPixelSize(int size)
 {
     if (m_pixelSize == size) {
         return;
@@ -68,7 +68,7 @@ void TightText::setPixelSize(int size)
     update();
 }
 
-void TightText::setFontWeight(int weight)
+void Glyph::setFontWeight(int weight)
 {
     if (m_fontWeight == weight) {
         return;
@@ -81,7 +81,7 @@ void TightText::setFontWeight(int weight)
     update();
 }
 
-void TightText::updateMetrics()
+void Glyph::updateMetrics()
 {
     QFont font(m_fontFamily);
     font.setPixelSize(m_pixelSize);
@@ -103,7 +103,7 @@ void TightText::updateMetrics()
     setImplicitHeight(qCeil(m_ascent + m_descent));
 }
 
-void TightText::renderToImage()
+void Glyph::renderToImage()
 {
     if (!m_imageDirty) {
         return;
@@ -141,7 +141,7 @@ void TightText::renderToImage()
     m_imageDirty = false;
 }
 
-QSGNode *TightText::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
+QSGNode *Glyph::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     if (m_text.isEmpty() || width() <= 0 || height() <= 0) {
         delete oldNode;

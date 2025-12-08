@@ -4,13 +4,13 @@
 set(QPL_QML_FILES
     GraphArea.qml
     Axis.qml
-    Axes.qml
+    Graph.qml
     TickLabel.qml
 )
 
 set(QPL_CPP_SOURCES
-    TightText.cpp
-    TightText.hpp
+    Glyph.cpp
+    Glyph.hpp
 )
 
 add_library(QuickPlotLibPlugin SHARED Plugin.cpp)

@@ -12,7 +12,7 @@ Window {
     visible: true
     title: "QuickPlotLib - 3x3 Layout Test"
 
-    Axes {
+    Graph {
         anchors.fill: parent
 
         // Default: left and bottom axes are automatically provided (2x2 layout)

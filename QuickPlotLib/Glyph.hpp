@@ -12,12 +12,12 @@
 class QSGTexture;
 
 /*!
-    \qmltype TightText
+    \qmltype Glyph
     \inqmlmodule QuickPlotLib
     \inherits QQuickItem
     \brief Renders text with pixel-perfect glyph-tight bounding box using GPU acceleration.
 
-    Unlike QML Text, TightText renders text without any internal padding.
+    Unlike QML Text, Glyph renders text without any internal padding.
     The item's width and height exactly match the rendered glyph bounds,
     enabling pixel-perfect alignment for tick labels and other precision text.
 
@@ -29,7 +29,7 @@ class QSGTexture;
 
     \sa TickLabel, Axis
 */
-class TightText : public QQuickItem {
+class Glyph : public QQuickItem {
     Q_OBJECT
     QML_ELEMENT
 
@@ -71,8 +71,8 @@ class TightText : public QQuickItem {
     Q_PROPERTY(qreal descent READ descent NOTIFY fontChanged)
 
 public:
-    explicit TightText(QQuickItem *parent = nullptr);
-    ~TightText() override;
+    explicit Glyph(QQuickItem *parent = nullptr);
+    ~Glyph() override;
 
     QString text() const { return m_text; }
     void setText(const QString &text);
