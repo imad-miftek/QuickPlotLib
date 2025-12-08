@@ -3,29 +3,33 @@
 
 #pragma once
 
-#include <QQuickPaintedItem>
+#include <QQuickItem>
 #include <QColor>
 #include <QFont>
-#include <QRawFont>
+#include <QImage>
 #include <QtQml/qqmlregistration.h>
+
+class QSGTexture;
 
 /*!
     \qmltype TightText
     \inqmlmodule QuickPlotLib
-    \inherits QQuickPaintedItem
-    \brief Renders text with pixel-perfect glyph-tight bounding box.
+    \inherits QQuickItem
+    \brief Renders text with pixel-perfect glyph-tight bounding box using GPU acceleration.
 
     Unlike QML Text, TightText renders text without any internal padding.
     The item's width and height exactly match the rendered glyph bounds,
     enabling pixel-perfect alignment for tick labels and other precision text.
 
-    The bounding box is computed using QRawFont glyph metrics:
-    - Width: sum of glyph advances
+    The bounding box is computed using QFontMetricsF:
+    - Width: horizontal advance of the text
     - Height: ascent + descent (no leading/padding)
+
+    Rendering uses the Qt Quick Scene Graph with cached textures for GPU acceleration.
 
     \sa TickLabel, Axis
 */
-class TightText : public QQuickPaintedItem {
+class TightText : public QQuickItem {
     Q_OBJECT
     QML_ELEMENT
 
@@ -68,8 +72,7 @@ class TightText : public QQuickPaintedItem {
 
 public:
     explicit TightText(QQuickItem *parent = nullptr);
-
-    void paint(QPainter *painter) override;
+    ~TightText() override;
 
     QString text() const { return m_text; }
     void setText(const QString &text);
@@ -94,8 +97,12 @@ signals:
     void colorChanged();
     void fontChanged();
 
+protected:
+    QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *updatePaintNodeData) override;
+
 private:
     void updateMetrics();
+    void renderToImage();
 
     QString m_text;
     QColor m_color = Qt::black;
@@ -107,4 +114,9 @@ private:
     qreal m_ascent = 0;
     qreal m_descent = 0;
     qreal m_textWidth = 0;
+
+    // Cached rendered image
+    QImage m_renderedImage;
+    bool m_imageDirty = true;
+    bool m_textureDirty = true;
 };

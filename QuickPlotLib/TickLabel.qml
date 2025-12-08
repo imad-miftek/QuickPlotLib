@@ -6,23 +6,23 @@ import QtQuick
 /*!
     \qmltype TickLabel
     \inqmlmodule QuickPlotLib
-    \inherits Rectangle
-    \brief A tick label placeholder for debugging positioning.
+    \inherits Item
+    \brief A tick label with pixel-perfect glyph-tight positioning.
 
-    This component renders a colored rectangle to visually verify
-    the positioning math for tick labels. Once positioning is confirmed,
-    it will be replaced with actual text rendering.
+    This component uses TightText for GPU-accelerated text rendering with
+    exact glyph bounds. The bounding box matches the rendered glyphs precisely,
+    enabling pixel-perfect alignment of tick labels to tick marks.
 
     Positioning is based on the relevant edge for each axis direction:
-    - Bottom axis: TOP edge is 'gap' pixels below tick
-    - Top axis: BOTTOM edge is 'gap' pixels above tick
-    - Left axis: RIGHT edge is 'gap' pixels left of tick
-    - Right axis: LEFT edge is 'gap' pixels right of tick
+    - Bottom axis: TOP edge of text is 'gap' pixels below tick
+    - Top axis: BOTTOM edge of text is 'gap' pixels above tick
+    - Left axis: RIGHT edge of text is 'gap' pixels left of tick
+    - Right axis: LEFT edge of text is 'gap' pixels right of tick
 
-    \sa Axis
+    \sa Axis, TightText
 */
 
-Rectangle {
+Item {
     id: root
 
     /*!
@@ -38,51 +38,48 @@ Rectangle {
     required property point tickEnd
 
     /*!
-        The data value to display (unused for now, kept for API compatibility).
+        The data value to display.
     */
     required property real value
 
     /*!
-        Number of decimal points to show (unused for now).
+        Number of decimal points to show.
     */
     property int decimalPoints: 2
 
     /*!
         Gap in pixels between the tick endpoint and the nearest edge of the label.
-        This gap should be visually consistent across all axis orientations.
+        This gap is visually consistent across all axis orientations.
     */
     property int gap: 4
 
     /*!
-        Color of the label text (unused for now).
+        Color of the label text.
     */
     property color textColor: "#333333"
 
     /*!
-        Font family (unused for now).
+        Font family of the label text.
     */
     property string fontFamily: "sans-serif"
 
     /*!
-        Font pixel size (unused for now).
+        Font pixel size of the label text.
     */
     property int fontSize: 12
 
-    // Fixed size rectangle for debugging - represents approximate text bounds
-    width: 30
-    height: 12
-
-    // Visible debug color
-    color: "#FF6B6B"
+    // Size matches the TightText exactly (pixel-perfect glyph bounds)
+    width: labelText.width
+    height: labelText.height
 
     // Position so the relevant EDGE is 'gap' pixels from tickEnd
     x: {
         switch (direction) {
         case Axis.Direction.Left:
-            // RIGHT edge of rectangle is 'gap' pixels from tick endpoint
-            return Math.floor(tickEnd.x - width - gap); // instead of Math.round
+            // RIGHT edge is 'gap' pixels from tick endpoint
+            return Math.floor(tickEnd.x - width - gap);
         case Axis.Direction.Right:
-            // LEFT edge of rectangle is 'gap' pixels from tick endpoint
+            // LEFT edge is 'gap' pixels from tick endpoint
             return Math.round(tickEnd.x + gap);
         case Axis.Direction.Top:
         case Axis.Direction.Bottom:
@@ -100,13 +97,30 @@ Rectangle {
             // Vertically centered on tick
             return Math.round(tickEnd.y - height / 2);
         case Axis.Direction.Top:
-            // BOTTOM edge of rectangle is 'gap' pixels from tick endpoint
+            // BOTTOM edge is 'gap' pixels from tick endpoint
             return Math.floor(tickEnd.y - height - gap);
         case Axis.Direction.Bottom:
-            // TOP edge of rectangle is 'gap' pixels from tick endpoint
+            // TOP edge is 'gap' pixels from tick endpoint
             return Math.round(tickEnd.y + gap);
         default:
             return 0;
         }
     }
+
+    // TightText provides GPU-accelerated rendering with exact glyph bounds
+    TightText {
+        id: labelText
+        text: Number(root.value).toFixed(root.decimalPoints)
+        color: root.textColor
+        fontFamily: root.fontFamily
+        pixelSize: root.fontSize
+    }
+
+    // DEBUG: Uncomment to visualize the glyph bounding box
+    // Rectangle {
+    //     anchors.fill: parent
+    //     color: "transparent"
+    //     border.color: "red"
+    //     border.width: 1
+    // }
 }
