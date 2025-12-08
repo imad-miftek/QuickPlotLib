@@ -138,13 +138,13 @@ Item {
 
                         if (root.isHorizontal) {
                             var x = Math.round(pos * (root.width - 1)) + 0.5;
-                            var y1 = root.direction === Axis.Direction.Bottom ? 0 : root.height;
-                            var y2 = root.direction === Axis.Direction.Bottom ? root.tickLength : root.height - root.tickLength;
+                            var y1 = root.direction === Axis.Direction.Bottom ? 0.5 : root.height - 0.5;
+                            var y2 = root.direction === Axis.Direction.Bottom ? root.tickLength - 0.5 : root.height - root.tickLength + 0.5;
                             lines.push([Qt.point(x, y1), Qt.point(x, y2)]);
                         } else {
                             var y = Math.round((1 - pos) * (root.height - 1)) + 0.5;
-                            var x1 = root.direction === Axis.Direction.Right ? 0 : root.width;
-                            var x2 = root.direction === Axis.Direction.Right ? root.tickLength : root.width - root.tickLength;
+                            var x1 = root.direction === Axis.Direction.Right ? 0.5 : root.width - 0.5;
+                            var x2 = root.direction === Axis.Direction.Right ? root.tickLength - 0.5 : root.width - root.tickLength + 0.5;
                             lines.push([Qt.point(x1, y), Qt.point(x2, y)]);
                         }
                     }
