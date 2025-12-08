@@ -2,130 +2,176 @@
 // SPDX-License-Identifier: MIT
 
 import QtQuick
-import QtQuick.Layouts
 
 /*!
-    \qmltype Axes
-    \inqmlmodule QuickPlotLib
-    \inherits Item
-    \brief A complete graph with 4 axes in a 3x3 grid layout.
+\qmltype Axes
+\inqmlmodule QuickPlotLib
+\inherits Item
+\brief Core axis layout system for a single GraphArea.
 
-    3x3 Grid Layout Structure:
-    [Empty]      [TopAxis]     [Empty]
-    [LeftAxis]   [GraphArea]   [RightAxis]
-    [Empty]      [BottomAxis]  [Empty]
+Conceptual 3x3 grid (corners are "nothing" cells):
+
+[ NC | TopAxis | NC ]
+[ LeftAxis| GraphArea | RightAxis ]
+[ NC | BottomAxis | NC ]
+
+Active structures:
+
+- Default (left + bottom):
+2x2 layout derived from middle + bottom rows, left + center cols:
+
+[ LeftAxis | GraphArea ]
+[ Nothing | BottomAxis ]
+
+- Left + Bottom + Right:
+2x3 layout (middle + bottom rows, all three cols):
+
+[ LeftAxis | GraphArea | RightAxis ]
+[ Nothing | BottomAxis | Nothing ]
+
+- Top + Left + Bottom:
+3x2 layout (all three rows, left + center cols):
+
+[ Nothing | TopAxis ]
+[ LeftAxis | GraphArea ]
+[ Nothing | BottomAxis ]
+
+- Top + Left + Bottom + Right:
+Full 3x3 layout:
+
+[ Nothing | TopAxis | Nothing ]
+[ LeftAxis | GraphArea | RightAxis ]
+[ Nothing | BottomAxis | Nothing ]
+
+Corners (NC) are simply empty areas of the root item.
 */
 
 Item {
     id: root
 
-    /*!
-        Graph title.
-    */
-    property string title: ""
+    // ---- Public API -------------------------------------------------------
 
-    /*!
-        Padding around the graph.
-    */
-    property int padding: 15
-
-    /*!
-        Show/hide individual axes.
-    */
-    property bool showLeftAxis: true
-    property bool showRightAxis: false
-    property bool showTopAxis: false
-    property bool showBottomAxis: true
-
-    GridLayout {
-        id: mainLayout
-        anchors.fill: parent
-        anchors.margins: root.padding
-        rows: 4  // Title + 3 layout rows
-        columns: 3
-        rowSpacing: 0
-        columnSpacing: 0
-
-        // Title (spans all columns)
-        Text {
-            id: titleLabel
-            Layout.columnSpan: 3
-            Layout.fillWidth: true
-            Layout.bottomMargin: root.title !== "" ? 10 : 0
-            text: root.title
-            font.pixelSize: 16
-            font.bold: true
-            horizontalAlignment: Text.AlignHCenter
-            visible: root.title !== ""
-        }
-
-        // Row 0: Top-Left (Empty) - TopAxis - Top-Right (Empty)
+    /*! Left axis component. Default placeholder is provided. */
+    property Component leftAxis: Component {
         Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showTopAxis ? 50 : 0
-            color: "#CCCCCC"
-            visible: root.showTopAxis
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showTopAxis ? 50 : 0
-            color: "#3498DB"
-            visible: root.showTopAxis
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showTopAxis ? 50 : 0
-            color: "#CCCCCC"
-            visible: root.showTopAxis
-        }
-
-        // Row 1: LeftAxis - GraphArea - RightAxis
-        Rectangle {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.preferredWidth: root.showLeftAxis ? 60 : 0
             color: "#E74C3C"
-            visible: root.showLeftAxis
         }
+    }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.minimumWidth: 200
-            Layout.minimumHeight: 200
-            color: "#2ECC71"
-        }
+    /*! Right axis component. Default is null (off). */
+    property Component rightAxis: null
 
-        Rectangle {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.preferredWidth: root.showRightAxis ? 60 : 0
-            color: "#9B59B6"
-            visible: root.showRightAxis
-        }
+    /*! Top axis component. Default is null (off). */
+    property Component topAxis: null
 
-        // Row 2: Bottom-Left (Empty) - BottomAxis - Bottom-Right (Empty)
+    /*! Bottom axis component. Default placeholder is provided. */
+    property Component bottomAxis: Component {
         Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showBottomAxis ? 50 : 0
-            color: "#CCCCCC"
-            visible: root.showBottomAxis
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showBottomAxis ? 50 : 0
             color: "#F39C12"
-            visible: root.showBottomAxis
         }
+    }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.showBottomAxis ? 50 : 0
-            color: "#CCCCCC"
-            visible: root.showBottomAxis
+    /*! Thickness of each axis band in pixels. */
+    property int leftAxisSize: 60
+    property int rightAxisSize: 60
+    property int topAxisSize: 60
+    property int bottomAxisSize: 60
+
+    /*! The central graph area. */
+    property alias graphArea: graphArea
+
+    /*! Default property - children go into graphArea. */
+    default property alias graphChildren: graphArea.data
+
+    /*! View rectangle for data coordinates, delegated to GraphArea. */
+    property alias viewRect: graphArea.viewRect
+
+    // ---- Derived layout margins (3x3 conceptual grid) ---------------------
+
+    readonly property bool hasLeftAxis: leftAxis !== null
+    readonly property bool hasRightAxis: rightAxis !== null
+    readonly property bool hasTopAxis: topAxis !== null
+    readonly property bool hasBottomAxis: bottomAxis !== null
+
+    readonly property int leftMargin: hasLeftAxis ? leftAxisSize : 0
+    readonly property int rightMargin: hasRightAxis ? rightAxisSize : 0
+    readonly property int topMargin: hasTopAxis ? topAxisSize : 0
+    readonly property int bottomMargin: hasBottomAxis ? bottomAxisSize : 0
+
+    // ---- Axis bands -------------------------------------------------------
+
+    // Top band (TopAxis) – occupies the conceptual top-center cell
+    Item {
+        id: topBand
+        x: leftMargin
+        y: 0
+        width: Math.max(0, root.width - leftMargin - rightMargin)
+        height: topMargin
+        visible: hasTopAxis && height > 0
+
+        Loader {
+            anchors.fill: parent
+            active: hasTopAxis
+            sourceComponent: topAxis
         }
+    }
+
+    // Bottom band (BottomAxis) – conceptual bottom-center cell
+    Item {
+        id: bottomBand
+        x: leftMargin
+        y: root.height - bottomMargin
+        width: Math.max(0, root.width - leftMargin - rightMargin)
+        height: bottomMargin
+        visible: hasBottomAxis && height > 0
+
+        Loader {
+            anchors.fill: parent
+            active: hasBottomAxis
+            sourceComponent: bottomAxis
+        }
+    }
+
+    // Left band (LeftAxis) – conceptual middle-left cell
+    Item {
+        id: leftBand
+        x: 0
+        y: topMargin
+        width: leftMargin
+        height: Math.max(0, root.height - topMargin - bottomMargin)
+        visible: hasLeftAxis && width > 0
+
+        Loader {
+            anchors.fill: parent
+            active: hasLeftAxis
+            sourceComponent: leftAxis
+        }
+    }
+
+    // Right band (RightAxis) – conceptual middle-right cell
+    Item {
+        id: rightBand
+        x: root.width - rightMargin
+        y: topMargin
+        width: rightMargin
+        height: Math.max(0, root.height - topMargin - bottomMargin)
+        visible: hasRightAxis && width > 0
+
+        Loader {
+            anchors.fill: parent
+            active: hasRightAxis
+            sourceComponent: rightAxis
+        }
+    }
+
+    // ---- Graph area (middle cell) ----------------------------------------
+
+    GraphArea {
+        id: graphArea
+
+        x: leftMargin
+        y: topMargin
+        width: Math.max(0, root.width - leftMargin - rightMargin)
+        height: Math.max(0, root.height - topMargin - bottomMargin)
     }
 }

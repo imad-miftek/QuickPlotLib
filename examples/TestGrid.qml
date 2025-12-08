@@ -14,15 +14,18 @@ Window {
 
     Axes {
         anchors.fill: parent
-        title: "QuickPlotLib 3x3 GridLayout Structure"
-        
-        // Configure which axes to show
-        showLeftAxis: true
-        showRightAxis: true
-        showTopAxis: true
-        showBottomAxis: true
-        
-        // Padding around the layout
-        padding: 15
+
+        // Default: left and bottom axes are automatically provided (2x2 layout)
+
+        // To add top axis, uncomment:
+        // topAxis: Component {
+        //     Rectangle { color: "#3498DB" }
+        // }
+
+        // To add right axis, uncomment:
+        // rightAxis: Component {
+        //     Rectangle { color: "#9B59B6" }
+        // }
+
     }
 }
