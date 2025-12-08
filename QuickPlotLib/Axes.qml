@@ -69,7 +69,7 @@ Item {
     property Component bottomAxis: Component {
         Axis {
             direction: Axis.Direction.Bottom
-            ticks: [0]
+            ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             backgroundColor: '#F39C12'
             showSpine: false
         }
