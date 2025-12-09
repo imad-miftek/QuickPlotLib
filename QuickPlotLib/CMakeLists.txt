@@ -4,7 +4,15 @@
 set(QPL_QML_FILES
     GraphArea.qml
     Axis.qml
-    Axes.qml
+    Graph.qml
+    TickLabel.qml
+)
+
+set(QPL_CPP_SOURCES
+    Glyph.cpp
+    Glyph.hpp
+    GlyphMetrics.cpp
+    GlyphMetrics.hpp
 )
 
 add_library(QuickPlotLibPlugin SHARED Plugin.cpp)
@@ -15,6 +23,7 @@ qt_add_qml_module(QuickPlotLib
     SHARED
     VERSION 1.0
     QML_FILES ${QPL_QML_FILES}
+    SOURCES ${QPL_CPP_SOURCES}
     PLUGIN_TARGET QuickPlotLibPlugin
     NO_GENERATE_PLUGIN_SOURCE
     NO_PLUGIN_OPTIONAL

@@ -12,30 +12,20 @@ Window {
     visible: true
     title: "QuickPlotLib - 3x3 Layout Test"
 
-    Axes {
+    Graph {
         anchors.fill: parent
-        title: "QuickPlotLib 3x3 GridLayout Structure"
-        
-        // View rectangle (data coordinates)
-        viewRect: Qt.rect(0, 0, 100, 100)
-        
-        // Configure which axes to show
-        showLeftAxis: true
-        showRightAxis: true
-        showTopAxis: true
-        showBottomAxis: true
-        
-        // Axis labels
-        leftLabel: "Left Axis"
-        rightLabel: "Right Axis"
-        topLabel: "Top Axis"
-        bottomLabel: "Bottom Axis"
-        
-        // Configure axis ticks
-        leftAxis.ticks: [0, 25, 50, 75, 100]
-        rightAxis.ticks: [0, 25, 50, 75, 100]
-        topAxis.ticks: [0, 25, 50, 75, 100]
-        bottomAxis.ticks: [0, 25, 50, 75, 100]
+
+        // Default: left and bottom axes are automatically provided (2x2 layout)
+
+        // To add top axis, uncomment:
+        // topAxis: Component {
+        //     Rectangle { color: "#3498DB" }
+        // }
+
+        // To add right axis, uncomment:
+        // rightAxis: Component {
+        //     Rectangle { color: "#9B59B6" }
+        // }
+
     }
 }
-

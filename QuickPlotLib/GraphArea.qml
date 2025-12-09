@@ -64,42 +64,41 @@ Item {
     Shape {
         id: gridShape
         anchors.fill: parent
-        
-        ShapePath {
-            strokeColor: root.gridColor
-            strokeWidth: 1
-            fillColor: "transparent"
-            
-            // Vertical grid lines
-            PathMultiline {
-                paths: {
-                    var lines = []
-                    for (var i = 0; i <= root.gridLinesX; i++) {
-                        var x = (i / root.gridLinesX) * root.width
-                        lines.push([Qt.point(x, 0), Qt.point(x, root.height)])
-                    }
-                    return lines
-                }
-            }
-        }
-        
-        ShapePath {
-            strokeColor: root.gridColor
-            strokeWidth: 1
-            fillColor: "transparent"
-            
-            // Horizontal grid lines
-            PathMultiline {
-                paths: {
-                    var lines = []
-                    for (var i = 0; i <= root.gridLinesY; i++) {
-                        var y = (i / root.gridLinesY) * root.height
-                        lines.push([Qt.point(0, y), Qt.point(root.width, y)])
-                    }
-                    return lines
-                }
-            }
-        }
+
+        // ShapePath {
+        //     strokeColor: root.gridColor
+        //     strokeWidth: 1
+        //     fillColor: "transparent"
+
+        //     // Vertical grid lines
+        //     PathMultiline {
+        //         paths: {
+        //             var lines = []
+        //             for (var i = 0; i <= root.gridLinesX; i++) {
+        //                 var x = (i / root.gridLinesX) * root.width
+        //                 lines.push([Qt.point(x, 0), Qt.point(x, root.height)])
+        //             }
+        //             return lines
+        //         }
+        //     }
+        // }
+
+        // ShapePath {
+        //     strokeColor: root.gridColor
+        //     strokeWidth: 1
+        //     fillColor: "transparent"
+
+        //     // Horizontal grid lines
+        //     PathMultiline {
+        //         paths: {
+        //             var lines = []
+        //             for (var i = 0; i <= root.gridLinesY; i++) {
+        //                 var y = (i / root.gridLinesY) * root.height
+        //                 lines.push([Qt.point(0, y), Qt.point(root.width, y)])
+        //             }
+        //             return lines
+        //         }
+        //     }
+        // }
     }
 }
-
