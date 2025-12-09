@@ -81,10 +81,10 @@ Item {
     }
 
     // DEBUG: Visualize bounding box (comment out for production)
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.color: "red"
-        border.width: 1
-    }
+    // Rectangle {
+    //     anchors.fill: parent
+    //     color: "transparent"
+    //     border.color: "red"
+    //     border.width: 1
+    // }
 }

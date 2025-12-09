@@ -96,17 +96,21 @@ void Glyph::updateMetrics()
     // Calculate logical text width (needed for comparison)
     m_textWidth = fm.horizontalAdvance(m_text);
 
-    // Calculate ink bounding rect (actual visual pixel bounds)
+    // Calculate ink bounding rects
+    // Use TWO different rects for optimal results:
+    // - boundingRect() for HORIZONTAL: consistent width metrics (keeps "10.00" fix)
+    // - tightBoundingRect() for VERTICAL: true ink height (no extra ascent/descent space)
     if (!m_text.isEmpty()) {
-        QRectF inkRect = fm.boundingRect(m_text);
+        QRectF horzRect = fm.boundingRect(m_text);       // For horizontal metrics
+        QRectF vertRect = fm.tightBoundingRect(m_text); // For vertical metrics
         
         // Store raw offsets for use in rendering (to shift ink to origin)
-        m_rawInkLeft = inkRect.left();
-        m_rawInkTop = inkRect.top();  // Typically negative (above baseline)
+        m_rawInkLeft = horzRect.left();
+        m_rawInkTop = vertRect.top();  // Use tight rect for vertical
         
         // Get the actual ink dimensions
-        m_inkWidth = inkRect.width();
-        m_inkHeight = inkRect.height();
+        m_inkWidth = horzRect.width();   // Use boundingRect for consistent horizontal
+        m_inkHeight = vertRect.height(); // Use tightBoundingRect for true vertical ink
         
         // NORMALIZE: After rendering, ink will start at (0,0)
         // So expose inkLeft=0, inkRight=inkWidth
