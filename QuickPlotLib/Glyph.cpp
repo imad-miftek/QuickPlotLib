@@ -93,14 +93,38 @@ void Glyph::updateMetrics()
     m_ascent = fm.ascent();
     m_descent = fm.descent();
 
-    // Calculate text width using horizontal advance
+    // Calculate logical text width (needed for comparison)
     m_textWidth = fm.horizontalAdvance(m_text);
 
-    // Set item size to exact glyph bounds
-    // Height = ascent + descent (no leading, no extra padding)
-    // Width = horizontal advance of the text
-    setImplicitWidth(qCeil(m_textWidth));
-    setImplicitHeight(qCeil(m_ascent + m_descent));
+    // Calculate ink bounding rect (actual visual pixel bounds)
+    if (!m_text.isEmpty()) {
+        QRectF inkRect = fm.boundingRect(m_text);
+        
+        // Store raw offsets for use in rendering (to shift ink to origin)
+        m_rawInkLeft = inkRect.left();
+        m_rawInkTop = inkRect.top();  // Typically negative (above baseline)
+        
+        // Get the actual ink dimensions
+        m_inkWidth = inkRect.width();
+        m_inkHeight = inkRect.height();
+        
+        // NORMALIZE: After rendering, ink will start at (0,0)
+        // So expose inkLeft=0, inkRight=inkWidth
+        m_inkLeft = 0;
+        m_inkRight = m_inkWidth;
+    } else {
+        m_rawInkLeft = 0;
+        m_rawInkTop = 0;
+        m_inkLeft = 0;
+        m_inkWidth = 0;
+        m_inkRight = 0;
+        m_inkHeight = 0;
+    }
+
+    // Set item size to exactly match the ink dimensions
+    // This makes the item's bounds equal to the actual visible pixels
+    setImplicitWidth(qCeil(m_inkWidth));
+    setImplicitHeight(qCeil(m_inkHeight));
 }
 
 void Glyph::renderToImage()
@@ -109,8 +133,9 @@ void Glyph::renderToImage()
         return;
     }
 
-    int imgWidth = qCeil(m_textWidth);
-    int imgHeight = qCeil(m_ascent + m_descent);
+    // Use ink dimensions for image - this is the actual visible pixel size
+    int imgWidth = qCeil(m_inkWidth);
+    int imgHeight = qCeil(m_inkHeight);
 
     if (imgWidth <= 0 || imgHeight <= 0 || m_text.isEmpty()) {
         m_renderedImage = QImage();
@@ -133,8 +158,13 @@ void Glyph::renderToImage()
     painter.setFont(font);
     painter.setPen(m_color);
 
-    // Draw text at baseline position (y = ascent)
-    painter.drawText(QPointF(0, m_ascent), m_text);
+    // Draw text shifted by (-rawInkLeft, -rawInkTop) so ink pixels start at (0,0)
+    // This normalizes the ink region to always begin at the top-left of the image
+    //
+    // Horizontal: if boundingRect().left() = -2.3, we draw at x = +2.3
+    // Vertical: if boundingRect().top() = -10 (above baseline), we draw baseline at y = +10
+    //           which is exactly -rawInkTop (since rawInkTop is negative)
+    painter.drawText(QPointF(-m_rawInkLeft, -m_rawInkTop), m_text);
 
     painter.end();
 

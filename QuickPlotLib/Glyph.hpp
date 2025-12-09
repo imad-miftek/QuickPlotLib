@@ -70,6 +70,32 @@ class Glyph : public QQuickItem {
     */
     Q_PROPERTY(qreal descent READ descent NOTIFY fontChanged)
 
+    /*!
+        The left edge of actual ink pixels, relative to item x=0.
+        Can be negative if glyphs extend left of the origin.
+        Use for pixel-perfect positioning based on visual ink, not logical bounds.
+    */
+    Q_PROPERTY(qreal inkLeft READ inkLeft NOTIFY textChanged)
+
+    /*!
+        The right edge of actual ink pixels, relative to item x=0.
+        Equal to inkLeft + inkWidth.
+    */
+    Q_PROPERTY(qreal inkRight READ inkRight NOTIFY textChanged)
+
+    /*!
+        The width of actual ink pixels (visual width of rendered text).
+        Use for pixel-perfect positioning based on visual ink, not logical bounds.
+    */
+    Q_PROPERTY(qreal inkWidth READ inkWidth NOTIFY textChanged)
+
+    /*!
+        The height of actual ink pixels (visual height of rendered text).
+        This is the tight vertical bound - excludes empty space for descenders
+        if the text has none.
+    */
+    Q_PROPERTY(qreal inkHeight READ inkHeight NOTIFY textChanged)
+
 public:
     explicit Glyph(QQuickItem *parent = nullptr);
     ~Glyph() override;
@@ -91,6 +117,10 @@ public:
 
     qreal ascent() const { return m_ascent; }
     qreal descent() const { return m_descent; }
+    qreal inkLeft() const { return m_inkLeft; }
+    qreal inkRight() const { return m_inkRight; }
+    qreal inkWidth() const { return m_inkWidth; }
+    qreal inkHeight() const { return m_inkHeight; }
 
 signals:
     void textChanged();
@@ -114,6 +144,18 @@ private:
     qreal m_ascent = 0;
     qreal m_descent = 0;
     qreal m_textWidth = 0;
+
+    // Ink bounding metrics (NORMALIZED: ink always starts at x=0, y=0)
+    // After normalization: inkLeft=0, inkRight=inkWidth, inkHeight=actual height
+    qreal m_inkLeft = 0;
+    qreal m_inkRight = 0;
+    qreal m_inkWidth = 0;
+    qreal m_inkHeight = 0;
+
+    // Raw ink offsets from boundingRect (used internally for rendering)
+    // These are the offsets needed to shift ink to start at (0,0)
+    qreal m_rawInkLeft = 0;
+    qreal m_rawInkTop = 0;
 
     // Cached rendered image
     QImage m_renderedImage;

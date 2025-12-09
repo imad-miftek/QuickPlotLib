@@ -11,6 +11,8 @@ set(QPL_QML_FILES
 set(QPL_CPP_SOURCES
     Glyph.cpp
     Glyph.hpp
+    GlyphMetrics.cpp
+    GlyphMetrics.hpp
 )
 
 add_library(QuickPlotLibPlugin SHARED Plugin.cpp)

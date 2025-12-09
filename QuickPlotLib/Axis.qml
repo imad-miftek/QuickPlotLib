@@ -55,6 +55,11 @@ Item {
     property int fontSize: 12
 
     /*!
+        Label font family.
+    */
+    property string fontFamily: "sans-serif"
+
+    /*!
         Axis color.
     */
     property color color: "#333333"
@@ -94,6 +99,28 @@ Item {
     readonly property bool isHorizontal: !isVertical
 
     /*!
+        The required thickness (width for vertical, height for horizontal) to fit all content.
+        Uses maxInkWidth which matches Glyph's normalized ink (always starts at x=0).
+        This guarantees no label will ever be clipped or eat into the tick gap.
+    */
+    readonly property real requiredThickness: {
+        if (!showTickLabels) {
+            return tickLength;
+        }
+
+        if (isVertical) {
+            // Since Glyph normalizes ink to start at x=0, item width = ink width
+            // Both LEFT and RIGHT axes need the same space: maxInkWidth
+            var maxWidth = GlyphMetrics.maxInkWidth(ticks, decimalPoints, fontFamily, fontSize);
+            return Math.ceil(tickLength + labelGap + maxWidth);
+        } else {
+            // For horizontal axes, use text height
+            var h = GlyphMetrics.textHeight(fontFamily, fontSize);
+            return Math.ceil(tickLength + labelGap + h);
+        }
+    }
+
+    /*!
         Computed tick positions with spine and end points for each tick.
         Used internally for rendering tick marks and labels.
     */
@@ -127,8 +154,8 @@ Item {
         return positions;
     }
 
-    implicitWidth: isVertical ? 60 : 200
-    implicitHeight: isHorizontal ? 50 : 200
+    implicitWidth: isVertical ? requiredThickness : 200
+    implicitHeight: isHorizontal ? requiredThickness : 200
 
     // Axis line
     Shape {
@@ -209,6 +236,7 @@ Item {
             decimalPoints: root.decimalPoints
             gap: root.labelGap
             textColor: root.labelColor
+            fontFamily: root.fontFamily
             fontSize: root.fontSize
         }
     }
