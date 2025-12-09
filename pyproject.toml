@@ -2,8 +2,8 @@
 name = "QuickPlotLib"
 description = "A scientific plotting library for QtQuick"
 readme = "README.md"
-license = { text = "MIT" }
-authors = [{ name = "Your Name", email = "your.email@example.com" }]
+license = { file = "LICENCE" }
+authors = [{ name = "Miftek Corporation", email = "info@miftek.com" }]
 dependencies = ["PySide6==6.10.1", "numpy"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -21,10 +21,10 @@ dynamic = ["version"]
 requires-python = ">=3.9"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/QuickPlotLib"
+Homepage = "https://github.com/imad-miftek/QuickPlotLib"
 
 [project.optional-dependencies]
-dev = [
+analyse = [
     # Code analysis
     "ruff",
     "mypy",

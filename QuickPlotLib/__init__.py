@@ -1,4 +1,4 @@
-﻿# SPDX-FileCopyrightText: Copyright (c) 2025 QuickPlotLib contributors
+# SPDX-FileCopyrightText: Copyright (c) 2025 Miftek Corporation
 # SPDX-License-Identifier: MIT
 
 import contextlib

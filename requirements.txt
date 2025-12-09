@@ -1,3 +1,5 @@
+mypy==1.18.2
+mypy_extensions==1.1.0
 numpy==2.3.5
 PySide6==6.10.1
 PySide6_Addons==6.10.1
@@ -10,5 +12,3 @@ setuptools==80.9.0
 setuptools-scm==9.2.2
 shiboken6==6.10.1
 shiboken6_generator==6.10.1
-mypy==1.18.2
-
